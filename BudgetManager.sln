@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0ADBAA3E-1700-4C47-8527-723A6DE71944}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DCB44A8B-6BF8-4675-B9DB-C865BAF25570}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GODBudgets", "src\GODBudgets\GODBudgets.csproj", "{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GODCommon", "src\GODCommon\GODCommon.csproj", "{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{95C03DCC-5E19-44D4-9DD5-7EAF4E25FCFC} = {0ADBAA3E-1700-4C47-8527-723A6DE71944}
+		{E6CC0ABC-57BF-4196-AC6E-72D04252ACA8} = {0ADBAA3E-1700-4C47-8527-723A6DE71944}
+	EndGlobalSection
+EndGlobal
