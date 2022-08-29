@@ -6,12 +6,8 @@ namespace GODCommon.Contexts.Configurations;
 
 public abstract class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : EntityBase
 {
-    public virtual void Configure(EntityTypeBuilder<TEntity> builder)
-    {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.CreatedAt).ValueGeneratedOnAdd();
-        builder.Property(x => x.UpdatedAt).ValueGeneratedOnUpdate();
-    }
+    public virtual void Configure(EntityTypeBuilder<TEntity> builder) => builder.HasKey(x => x.Id);
+
     public abstract class AsSnapshotConfiguration<TSnapshot> : BaseEntityConfiguration<TSnapshot> where TSnapshot : EntityBase.AsSnapshot
     {
         public override void Configure(EntityTypeBuilder<TSnapshot> builder)

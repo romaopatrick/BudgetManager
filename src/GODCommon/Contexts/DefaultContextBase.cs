@@ -1,4 +1,4 @@
-using FastEndpoints;
+using System.Diagnostics.CodeAnalysis;
 using GODCommon.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -7,13 +7,14 @@ namespace GODCommon.Contexts;
 
 public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where TContext : DbContext
 {
-    public DefaultContextBase(DbContextOptions<TContext> options) : base(options)
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
+    protected DefaultContextBase(DbContextOptions<TContext> options) : base(options)
     {
         ChangeTracker.AutoDetectChangesEnabled = false;
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         ChangeTracker.LazyLoadingEnabled = false;
     }
-    
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var entry in ChangeTracker.Entries<EntityBase>())
@@ -22,16 +23,12 @@ public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where 
 
         return base.SaveChangesAsync(cancellationToken);
     }
-    private void HandleEvent(EntityEntry<EntityBase> entry, EventEntity<TSnapshot> entity)
+    private static void HandleEvent(EntityEntry<EntityBase> entry, EventEntity<TSnapshot> entity)
     {
         switch (entry.State)
         {
             case EntityState.Added:
                 entity.CreatedAt = DateTime.UtcNow;
-                break;
-
-            case EntityState.Modified:
-                entity.UpdatedAt = DateTime.UtcNow;
                 break;
         }
     }
@@ -41,12 +38,12 @@ public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where 
         switch (entry.State)
         {
             case EntityState.Added:
-                entry.Entity.CreatedAt = DateTime.UtcNow;
+                entity.CreatedAt = DateTime.UtcNow;
                 entity.Enabled = true;
                 break;
 
             case EntityState.Modified:
-                entry.Entity.UpdatedAt = DateTime.UtcNow;
+                entity.UpdatedAt = DateTime.UtcNow;
                 entity.Version++;
                 break;
         }

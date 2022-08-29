@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GODCommon.Contexts;
 
-public static class ContextDIExtensions
+public static class ContextDependencyInjectionExtensions
 {
     public static IServiceCollection AddContext<TContext, TSnapshot>(this IServiceCollection services,
         IConfiguration configuration) where TContext : DefaultContextBase<TContext, TSnapshot> => services

@@ -4,11 +4,11 @@ namespace GODBudgets.Endpoints.Create;
 
 public class CreateBudgetCommand
 {
-    public long OrderNumber { get; set; }
-    public decimal ProposedValue { get; set; }
-    public DateTime? ExpectedCompletionDate { get; set; }
-    public string? Details { get; set; }
-    public bool SendEmailOnComplete { get; set; }
+    public long OrderNumber { get; init; }
+    public decimal? ProposedValue { get; init; }
+    public DateTime? ExpectedCompletionDate { get; init; }
+    public string? Details { get; init; }
+    public bool SendEmailOnComplete { get; init; }
 
     public Budget ToEntity() => new()
     {

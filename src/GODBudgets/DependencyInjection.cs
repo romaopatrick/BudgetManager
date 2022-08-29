@@ -3,11 +3,9 @@ using GODCommon.Contexts;
 
 namespace GODBudgets;
 
-public static class DI
+public static class DependencyInjection
 {
     public static void AddApplicationServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
+        IConfiguration configuration) =>
         services.AddContext<DefaultContext, Budget>(configuration);
-    }
 }

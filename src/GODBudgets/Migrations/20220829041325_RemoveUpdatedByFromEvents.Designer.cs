@@ -3,6 +3,7 @@ using System;
 using GODBudgets.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GODBudgets.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20220829041325_RemoveUpdatedByFromEvents")]
+    partial class RemoveUpdatedByFromEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,6 +32,7 @@ namespace GODBudgets.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
@@ -69,6 +72,7 @@ namespace GODBudgets.Migrations
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -93,6 +97,7 @@ namespace GODBudgets.Migrations
                         .HasColumnName("id");
 
                     b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 

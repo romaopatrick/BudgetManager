@@ -1,8 +1,11 @@
 global using FastEndpoints;
+using System.Text.Json.Serialization;
 using FastEndpoints.Swagger;
 using GODBudgets;
 using GODBudgets.Infra;
 using GODCommon.Contexts;
+using GODCommon.Processors.Pre;
+using Newtonsoft.Json.Converters;
 using NSwag;
 using Serilog;
 
@@ -13,7 +16,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Host.UseSerilog();
 
-builder.Services.AddFastEndpoints();
 builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerDoc(c =>
 {
@@ -25,10 +27,13 @@ builder.Services.AddSwaggerDoc(c =>
         In = OpenApiSecurityApiKeyLocation.Header,
         Type = OpenApiSecuritySchemeType.ApiKey
     });
+    c.SerializerSettings.Converters.Add(new StringEnumConverter());
 });
 builder.Services.AddAuthentication();
 builder.Services.AddLogging()
     .AddApplicationServices(builder.Configuration);
+builder.Services.AddFastEndpoints();
+
 
 var app = builder.Build();
 
@@ -42,7 +47,20 @@ app.UseHealthChecks("/health");
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseFastEndpoints();
+app.UseFastEndpoints(c =>
+{
+    c.Endpoints.Configurator = ep =>
+    {
+        ep.Throttle(120, 60, "X-Client-Id");
+        ep.DontThrowIfValidationFails();
+        ep.DontAutoTag();
+        ep.Description(d => d.WithTags("Budgets"));
+        ep.PreProcessors(new ValidationFailureProcessor());
+    };
+    c.Serializer.Options.PropertyNameCaseInsensitive = true;
+    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
+    c.Endpoints.RoutePrefix = "api";
+});
 
 app.UseAutoMigration<DefaultContext, Budget>();
 

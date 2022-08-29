@@ -1,7 +1,7 @@
 using System.Net;
+using GODCommon.Notifications;
 using GODCommon.Results;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -25,7 +25,7 @@ public class ExceptionMiddleware
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        _logger.LogError(exception, "{message}", exception.Message);
+        _logger.LogError(exception, "{Mes}", exception.Message);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -33,7 +33,6 @@ public class ExceptionMiddleware
         return context.Response.WriteAsync(
             JsonConvert.SerializeObject(
                 ResultFactory.WithError(
-                    "INTERNAL_SERVER_ERROR",
-                    HttpStatusCode.InternalServerError)));
+                    GenericNotifications.InternalServerError)));
     }
 }
