@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GODCommon.Middlewares;
 
-public class ExceptionMiddleware
+public sealed class ExceptionMiddleware
 {
     private readonly ILogger _logger;
     public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger) => _logger = logger;

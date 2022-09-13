@@ -2,11 +2,12 @@ using GODCommon.Enums;
 
 namespace GODBudgets.Endpoints.Create;
 
-public class CreateBudgetCommand
+public sealed class CreateBudgetCommand
 {
     public long OrderNumber { get; init; }
-    public decimal? ProposedValue { get; init; }
-    public DateTime? ExpectedCompletionDate { get; init; }
+    public decimal? ProposedValue { get; init; }    
+    public int? WorkingDaysToComplete { get; set; }
+
     public string? Details { get; init; }
     public bool SendEmailOnComplete { get; init; }
 
@@ -15,7 +16,7 @@ public class CreateBudgetCommand
         Details = Details,
         Status = BudgetStatus.Pending,
         OrderNumber = OrderNumber,
-        ExpectedCompletionDate = ExpectedCompletionDate,
+        WorkingDaysToComplete = WorkingDaysToComplete,
         SendEmailOnComplete = SendEmailOnComplete,
         ProposedValue = ProposedValue
     };

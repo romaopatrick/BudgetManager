@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 namespace GODCommon.Contexts;
 
 public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where TContext : DbContext
+    where TSnapshot : EntityBase.AsSnapshot
 {
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     protected DefaultContextBase(DbContextOptions<TContext> options) : base(options)
@@ -15,6 +16,20 @@ public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where 
         ChangeTracker.LazyLoadingEnabled = false;
     }
 
+    public async Task SaveEventAsync<TEvent>(TSnapshot snapshot, TEvent @event, CancellationToken ct)
+    where TEvent : EventEntity<TSnapshot>
+    {
+        Set<TSnapshot>().Update(snapshot);
+        await Set<TEvent>().AddAsync(@event, ct);
+
+        await SaveChangesAsync(ct);
+    }
+    public async Task SaveEventAsync<TEvent>(TEvent @event, CancellationToken ct)
+        where TEvent : EventEntity<TSnapshot>
+    {
+        await Set<TEvent>().AddAsync(@event, ct);
+        await SaveChangesAsync(ct);
+    }
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var entry in ChangeTracker.Entries<EntityBase>())

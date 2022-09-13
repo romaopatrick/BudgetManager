@@ -8,8 +8,8 @@ public static class BudgetNotifications
     public const string InvalidDetailsLength = nameof(InvalidDetailsLength);
     public const string InvalidProposedValue = nameof(InvalidProposedValue);
     public const string ProposedValueCannotBeEmpty = nameof(ProposedValueCannotBeEmpty);
-    public const string ExpectedCompletionDateCannotBeEmpty = nameof(ExpectedCompletionDateCannotBeEmpty);
-    public const string InvalidExpectedCompletionDate = nameof(InvalidExpectedCompletionDate);
+    public const string WorkingDaysToCompleteCannotBeEmpty = nameof(WorkingDaysToCompleteCannotBeEmpty);
+    public const string InvalidWorkingDaysToComplete = nameof(InvalidWorkingDaysToComplete);
     public const string InvalidStatus = nameof(InvalidStatus);
     public const string BudgetNotFound = nameof(BudgetNotFound);
 }

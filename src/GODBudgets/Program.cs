@@ -1,10 +1,9 @@
 global using FastEndpoints;
-using System.Text.Json.Serialization;
 using FastEndpoints.Swagger;
 using GODBudgets;
 using GODBudgets.Infra;
+using GODCommon;
 using GODCommon.Contexts;
-using GODCommon.Processors.Pre;
 using Newtonsoft.Json.Converters;
 using NSwag;
 using Serilog;
@@ -47,21 +46,8 @@ app.UseHealthChecks("/health");
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseFastEndpoints(c =>
-{
-    c.Endpoints.Configurator = ep =>
-    {
-        ep.Throttle(120, 60, "X-Client-Id");
-        ep.DontThrowIfValidationFails();
-        ep.DontAutoTag();
-        ep.Description(d => d.WithTags("Budgets"));
-        ep.PreProcessors(new ValidationFailureProcessor());
-    };
-    c.Serializer.Options.PropertyNameCaseInsensitive = true;
-    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
-    c.Endpoints.RoutePrefix = "api";
-});
 
+app.UseCommonFastEndpoints("budgets");
 app.UseAutoMigration<DefaultContext, Budget>();
 
 app.Run();

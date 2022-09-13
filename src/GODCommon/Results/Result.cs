@@ -11,7 +11,7 @@ public interface IResult
     IEnumerable<string> Notifications { get; }
     bool Success { get; }
 }
-public class Result<TResult> : Result, IResult<TResult>
+public sealed class Result<TResult> : Result, IResult<TResult>
 {
     internal Result(TResult data, bool success) : base(success)
     {

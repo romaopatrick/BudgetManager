@@ -3,7 +3,7 @@ using GODCommon.Enums;
 
 namespace GODCommon.Events;
 
-public class EventResult<TSnapshot> where TSnapshot : EntityBase.AsSnapshot 
+public sealed class EventResult<TSnapshot> where TSnapshot : EntityBase.AsSnapshot 
 {
     public Guid EventId { get; init; }
     public DateTime EventDate { get; init; }

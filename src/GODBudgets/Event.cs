@@ -3,7 +3,7 @@ using GODCommon.Enums;
 
 namespace GODBudgets;
 
-public class Event : EventEntity<Budget>
+public sealed class Event : EventEntity<Budget>
 {
     public static Event Trigger(Budget s, EventType type) => new()
     {

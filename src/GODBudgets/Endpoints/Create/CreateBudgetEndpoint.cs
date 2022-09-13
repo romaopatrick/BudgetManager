@@ -10,7 +10,7 @@ using IResult = GODCommon.Results.IResult;
 
 namespace GODBudgets.Endpoints.Create;
 
-public class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, EventResult<Budget>>
+public sealed class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, EventResult<Budget>>
 {
     private readonly DefaultContext _context;
 
@@ -37,7 +37,7 @@ public class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, EventResul
 
     private Task BudgetInProgressFail(CancellationToken ct)
         => SendAsync(
-            ResultFactory.WithError<EventResult<Budget>>(BudgetNotifications.AnotherBudgetInProgress),
+            RFac.WithError<EventResult<Budget>>(BudgetNotifications.AnotherBudgetInProgress),
             (int)HttpStatusCode.BadRequest, ct);
     private Task<bool> BudgetInProgress(CreateBudgetCommand req, CancellationToken ct) =>
         _context.Budgets.AnyAsync(x =>
@@ -50,23 +50,11 @@ public class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, EventResul
     private async Task Success(CreateBudgetCommand req, CancellationToken ct)
     {
         var budget = req.ToEntity();
-        await Save(budget);
-        
         var creation = Event.Trigger(budget, EventType.Creation);
-        await Save(creation);
         
-        await SendAsync(ResultFactory.WithSuccess(EventResult<Budget>.Trigger(creation)), (int)HttpStatusCode.Created, ct);
+        await _context.SaveEventAsync(budget, creation, ct);
+        await SendAsync(
+            RFac.WithSuccess(EventResult<Budget>.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
-    private async Task Save(Budget b)
-    {
-        await _context.AddAsync(b);
-        await _context.SaveChangesAsync();
-    }
-    private async Task Save(Event bc)
-    {
-        await _context.AddAsync(bc);
-        await _context.SaveChangesAsync();
-    }
-
 
 }

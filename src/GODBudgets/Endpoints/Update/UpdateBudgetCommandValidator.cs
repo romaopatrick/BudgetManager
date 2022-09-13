@@ -3,7 +3,7 @@ using GODCommon.Notifications;
 
 namespace GODBudgets.Endpoints.Update;
 
-public class UpdateBudgetCommandValidator : Validator<UpdateBudgetCommand>
+public sealed class UpdateBudgetCommandValidator : Validator<UpdateBudgetCommand>
 {
     public UpdateBudgetCommandValidator()
     {
@@ -11,8 +11,8 @@ public class UpdateBudgetCommandValidator : Validator<UpdateBudgetCommand>
         
         RuleFor(x => x.ProposedValue).GreaterThanOrEqualTo(0).WithErrorCode(BudgetNotifications.InvalidProposedValue);
         RuleFor(x => x.Status).IsInEnum().WithErrorCode(BudgetNotifications.InvalidStatus);
-        RuleFor(x => x.ExpectedCompletionDate)
-            .GreaterThanOrEqualTo(DateTime.Now.Date)
-            .WithErrorCode(BudgetNotifications.InvalidExpectedCompletionDate);
+        RuleFor(x => x.WorkingDaysToComplete)
+            .GreaterThanOrEqualTo(0)
+            .WithErrorCode(BudgetNotifications.InvalidWorkingDaysToComplete);
     }
 }

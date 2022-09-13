@@ -10,18 +10,15 @@ using IResult = GODCommon.Results.IResult;
 
 namespace GODBudgets.Endpoints.Update;
 
-public class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, EventResult<Budget>>
+public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, EventResult<Budget>>
 {
     private readonly DefaultContext _context;
 
-    public UpdateBudgetEndpoint(DefaultContext context)
-    {
-        _context = context;
-    }
+    public UpdateBudgetEndpoint(DefaultContext context) => _context = context;
 
     public override void Configure()
     {
-        Put("updates/{BudgetId}");
+        Put("updates/{budgetId}");
         Description(c => c.Produces<IResult<EventResult<Budget>>>()
             .Produces<IResult>((int)HttpStatusCode.BadRequest)
             .Produces<IResult>((int)HttpStatusCode.NotFound)
@@ -38,28 +35,14 @@ public class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, EventResul
     }
 
     private Task BudgetNotFoundFail(CancellationToken ct)
-        => SendAsync(ResultFactory.WithError<EventResult<Budget>>(
-            BudgetNotifications.BudgetNotFound), (int)HttpStatusCode.NotFound, ct);
+        => SendAsync(RFac.WithError<EventResult<Budget>>(
+            BudgetNotifications.BudgetNotFound), (int)HttpStatusCode.BadRequest, ct);
     private async Task Success(UpdateBudgetCommand req, Budget budget, CancellationToken ct)
     {
         req.UpdateEntity(budget);
-        await Save(budget);
-
         var update = Event.Trigger(budget, EventType.Update);
-        await Save(update);
 
-        await SendAsync(ResultFactory.WithSuccess(EventResult<Budget>.Trigger(update)), (int)HttpStatusCode.OK, ct);
+        await _context.SaveEventAsync(budget, update, ct);
+        await SendAsync(RFac.WithSuccess(EventResult<Budget>.Trigger(update)), (int)HttpStatusCode.OK, ct);
     }
-    private async Task Save(Budget b)
-    {
-        _context.Update(b);
-        await _context.SaveChangesAsync();
-    }
-
-    private async Task Save(Event e)
-    {
-        await _context.AddAsync(e);
-        await _context.SaveChangesAsync();
-    }
-
 }

@@ -41,10 +41,6 @@ namespace GODBudgets.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("enabled");
 
-                    b.Property<DateTime?>("ExpectedCompletionDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expected_completion_date");
-
                     b.Property<long>("OrderNumber")
                         .HasColumnType("bigint")
                         .HasColumnName("order_number");
@@ -76,11 +72,18 @@ namespace GODBudgets.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("version");
 
+                    b.Property<int?>("WorkingDaysToComplete")
+                        .HasColumnType("integer")
+                        .HasColumnName("working_days_to_complete");
+
                     b.HasKey("Id")
                         .HasName("pk_budgets");
 
                     b.HasAlternateKey("SnapshotNumber")
                         .HasName("ak_budgets_snapshot_number");
+
+                    b.HasIndex("SnapshotNumber")
+                        .HasDatabaseName("ix_budgets_snapshot_number");
 
                     b.ToTable("budgets", (string)null);
                 });

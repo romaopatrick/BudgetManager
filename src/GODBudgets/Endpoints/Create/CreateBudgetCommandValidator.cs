@@ -3,7 +3,7 @@ using GODCommon.Notifications;
 
 namespace GODBudgets.Endpoints.Create;
 
-public class CreateBudgetCommandValidator : Validator<CreateBudgetCommand>
+public sealed class CreateBudgetCommandValidator : Validator<CreateBudgetCommand>
 {
     public CreateBudgetCommandValidator()
     {
@@ -15,9 +15,9 @@ public class CreateBudgetCommandValidator : Validator<CreateBudgetCommand>
         RuleFor(x => x.ProposedValue).NotNull().WithErrorCode(BudgetNotifications.ProposedValueCannotBeEmpty)
             .GreaterThanOrEqualTo(0).WithErrorCode(BudgetNotifications.InvalidProposedValue);
 
-        RuleFor(x => x.ExpectedCompletionDate).NotNull()
-            .WithErrorCode(BudgetNotifications.ExpectedCompletionDateCannotBeEmpty)
-            .GreaterThanOrEqualTo(DateTime.Now.Date)
-            .WithErrorCode(BudgetNotifications.InvalidExpectedCompletionDate);
+        RuleFor(x => x.WorkingDaysToComplete).NotNull()
+            .WithErrorCode(BudgetNotifications.WorkingDaysToCompleteCannotBeEmpty)
+            .GreaterThanOrEqualTo(0)
+            .WithErrorCode(BudgetNotifications.InvalidWorkingDaysToComplete);
     }
 }

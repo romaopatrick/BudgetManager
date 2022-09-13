@@ -2,7 +2,7 @@ using FluentValidation.Results;
 
 namespace GODCommon.Results;
 
-public static class ResultFactory
+public static class RFac
 {
     public static IResult<TResult> WithSuccess<TResult>(TResult result)
         => new Result<TResult>(result, true);

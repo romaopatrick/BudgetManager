@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace GODBudgets.Infra.Configurations;
 
-public class EventConfiguration : BaseEntityConfiguration<Event>
+public sealed class EventConfiguration : BaseEntityConfiguration<Event>
 {
     public override void Configure(EntityTypeBuilder<Event> builder)
     {

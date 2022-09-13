@@ -15,6 +15,7 @@ public abstract class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguratio
             builder.HasQueryFilter(x => x.Enabled);
             builder.HasAlternateKey(x => x.SnapshotNumber);
             builder.Property(x => x.SnapshotNumber).ValueGeneratedOnAdd();
+            builder.HasIndex(x => x.SnapshotNumber);
             base.Configure(builder);
         }
     }
