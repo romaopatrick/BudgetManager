@@ -10,10 +10,7 @@ namespace GODOrders.Endpoints.Create;
 
 public sealed class CreateOrderEndpoint : BaseEndpoint<CreateOrderCommand, EventResult<Order>>
 {
-    private readonly DefaultContext _context;
-
-    public CreateOrderEndpoint(DefaultContext context) => _context = context;
-
+    public CreateOrderEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Post("creations");
@@ -29,9 +26,9 @@ public sealed class CreateOrderEndpoint : BaseEndpoint<CreateOrderCommand, Event
         var order = req.ToEntity();
         var creation = Event.Trigger(order, EventType.Creation);
 
-        await _context.SaveEventAsync(order, creation, ct);
+        await Context.SaveEventAsync(order, creation, ct);
         await SendAsync(
-            RFac.WithSuccess(EventResult<Order>.Trigger(creation)), (int)HttpStatusCode.Created, ct);
+            RFac.WithSuccess(EventResultTrigger.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
     
 }

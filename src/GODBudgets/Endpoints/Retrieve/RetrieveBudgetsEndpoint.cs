@@ -11,9 +11,7 @@ namespace GODBudgets.Endpoints.Retrieve;
 
 public sealed class RetrieveBudgetsEndpoint : BaseEndpoint<RetrieveBudgetsCommand, Paged<Budget>>
 {
-    private readonly DefaultContext _context;
-
-    public RetrieveBudgetsEndpoint(DefaultContext context) => _context = context;
+    public RetrieveBudgetsEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Get("paging");
@@ -33,7 +31,7 @@ public sealed class RetrieveBudgetsEndpoint : BaseEndpoint<RetrieveBudgetsComman
 
     private IQueryable<Budget> Query(RetrieveBudgetsCommand req)
     {
-        var query = _context.Budgets.AsQueryable();
+        var query = Context.Budgets.AsQueryable();
         if (req.Status.HasValue)
             query = query.Where(b => b.Status == req.Status);
 

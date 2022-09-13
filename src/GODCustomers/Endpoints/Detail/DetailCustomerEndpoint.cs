@@ -10,9 +10,7 @@ namespace GODCustomers.Endpoints.Detail;
 
 public sealed class DetailCustomerEndpoint : BaseEndpoint<DetailCustomerCommand, Customer>
 {
-    private readonly DefaultContext _context;
-
-    public DetailCustomerEndpoint(DefaultContext context) => _context = context;
+    public DetailCustomerEndpoint(DefaultContext context) : base(context) {}
     
     public override void Configure()
     {
@@ -25,7 +23,7 @@ public sealed class DetailCustomerEndpoint : BaseEndpoint<DetailCustomerCommand,
 
     public override async Task HandleAsync(DetailCustomerCommand req, CancellationToken ct)
     {
-        var customer = await _context.Customers.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
+        var customer = await Context.Customers.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
         if (customer is null)
             await SendAsync(
                 RFac.WithError<Customer>(CustomerNotifications.CustomerNotFound),

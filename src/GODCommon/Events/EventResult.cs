@@ -9,8 +9,12 @@ public sealed class EventResult<TSnapshot> where TSnapshot : EntityBase.AsSnapsh
     public DateTime EventDate { get; init; }
     public TSnapshot? Snapshot { get; init; }
     public EventType Type { get; init; }
+}
 
-    public static EventResult<TSnapshot> Trigger(EventEntity<TSnapshot> bc)
+public static class EventResultTrigger
+{
+    public static EventResult<TSnapshot> Trigger<TSnapshot>(EventEntity<TSnapshot> bc)
+        where TSnapshot : EntityBase.AsSnapshot 
         => new()
         {
             Snapshot = bc.Snapshot,

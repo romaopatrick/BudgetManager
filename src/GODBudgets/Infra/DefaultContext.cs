@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GODBudgets.Infra;
 
-public sealed class DefaultContext : DefaultContextBase<DefaultContext, Budget>
+public sealed class DefaultContext : DefaultContextBase<Budget>
 {
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {}

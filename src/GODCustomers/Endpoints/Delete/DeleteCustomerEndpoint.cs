@@ -12,9 +12,9 @@ namespace GODCustomers.Endpoints.Delete;
 
 public class DeleteCustomerEndpoint : BaseEndpoint<DeleteCustomerCommand, EventResult<Customer>>
 {
-    private readonly DefaultContext _context;
-    public DeleteCustomerEndpoint(DefaultContext context) => _context = context;
-
+    public DeleteCustomerEndpoint(DefaultContext context) : base(context)
+    {
+    }
     public override void Configure()
     {
         Delete("deletions/{customerId}");
@@ -26,18 +26,18 @@ public class DeleteCustomerEndpoint : BaseEndpoint<DeleteCustomerCommand, EventR
 
     public override async Task HandleAsync(DeleteCustomerCommand req, CancellationToken ct)
     {
-        var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
+        var customer = await Context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
         if (customer is null)
             await SendAsync(
                 RFac.WithError<EventResult<Customer>>(CustomerNotifications.CustomerNotFound),
                 (int)HttpStatusCode.NotFound, ct);
         else
         {
-            _context.Remove(customer);
+            Context.Remove(customer);
             var deletion = Event.Trigger(customer, EventType.Deletion);
 
-            await _context.SaveEventAsync(deletion, ct);
-            await SendAsync(RFac.WithSuccess(EventResult<Customer>.Trigger(deletion)), cancellation: ct);
+            await Context.SaveEventAsync(deletion, ct);
+            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(deletion)), cancellation: ct);
         }
     }
 }

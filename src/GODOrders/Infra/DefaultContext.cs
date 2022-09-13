@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GODOrders.Infra;
 
-public sealed class DefaultContext : DefaultContextBase<DefaultContext, Order>
+public sealed class DefaultContext : DefaultContextBase<Order>
 {
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {

@@ -12,8 +12,7 @@ namespace GODCustomers.Endpoints.Update;
 
 public sealed class UpdateCustomerEndpoint : BaseEndpoint<UpdateCustomerCommand, EventResult<Customer>>
 {
-    private readonly DefaultContext _context;
-    public UpdateCustomerEndpoint(DefaultContext context) => _context = context;
+    public UpdateCustomerEndpoint(DefaultContext context) : base(context) {}
 
     public override void Configure()
     {
@@ -27,7 +26,7 @@ public sealed class UpdateCustomerEndpoint : BaseEndpoint<UpdateCustomerCommand,
 
     public override async Task HandleAsync(UpdateCustomerCommand req, CancellationToken ct)
     {
-        var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
+        var customer = await Context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
         if (customer is null)
             await SendAsync(
                 RFac.WithError<EventResult<Customer>>(
@@ -38,8 +37,8 @@ public sealed class UpdateCustomerEndpoint : BaseEndpoint<UpdateCustomerCommand,
             req.UpdateEntity(customer);
             var update = Event.Trigger(customer, EventType.Update);
 
-            await _context.SaveEventAsync(customer, update, ct);
-            await SendAsync(RFac.WithSuccess(EventResult<Customer>.Trigger(update)), cancellation: ct);
+            await Context.SaveEventAsync(customer, update, ct);
+            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(update)), cancellation: ct);
         }
     }
 }

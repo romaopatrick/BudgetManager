@@ -10,10 +10,7 @@ namespace GODCustomers.Endpoints.Create;
 
 public sealed class CreateCustomerEndpoint : BaseEndpoint<CreateCustomerCommand, EventResult<Customer>>
 {
-    private readonly DefaultContext _context;
-
-    public CreateCustomerEndpoint(DefaultContext context) => _context = context;
-
+    public CreateCustomerEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Post("creations");
@@ -29,9 +26,9 @@ public sealed class CreateCustomerEndpoint : BaseEndpoint<CreateCustomerCommand,
         var customer = req.ToEntity();
         var creation = Event.Trigger(customer, EventType.Creation);
 
-        await _context.SaveEventAsync(customer, creation, ct);
+        await Context.SaveEventAsync(customer, creation, ct);
         await SendAsync(
             RFac.WithSuccess(
-                EventResult<Customer>.Trigger(creation)), (int)HttpStatusCode.Created, ct);
+                EventResultTrigger.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
 }

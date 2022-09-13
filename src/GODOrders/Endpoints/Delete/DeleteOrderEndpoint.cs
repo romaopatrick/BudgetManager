@@ -12,8 +12,7 @@ namespace GODOrders.Endpoints.Delete;
 
 public sealed class DeleteOrderEndpoint : BaseEndpoint<DeleteOrderCommand, EventResult<Order>>
 {
-    private readonly DefaultContext _context;
-    public DeleteOrderEndpoint(DefaultContext context) => _context = context;
+    public DeleteOrderEndpoint(DefaultContext context) : base(context){}
 
     public override void Configure()
     {
@@ -26,18 +25,18 @@ public sealed class DeleteOrderEndpoint : BaseEndpoint<DeleteOrderCommand, Event
 
     public override async Task HandleAsync(DeleteOrderCommand req, CancellationToken ct)
     {
-        var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == req.OrderId, ct);
+        var order = await Context.Orders.FirstOrDefaultAsync(x => x.Id == req.OrderId, ct);
         if (order is null)
             await SendAsync(RFac.WithError<EventResult<Order>>(OrderNotifications.OrderNotFound),
                 (int)HttpStatusCode.NotFound, ct);
 
         else
         {
-            _context.Orders.Remove(order);
+            Context.Orders.Remove(order);
             var deletion = Event.Trigger(order, EventType.Deletion);
-            await _context.SaveEventAsync(deletion, ct);
+            await Context.SaveEventAsync(deletion, ct);
 
-            await SendAsync(RFac.WithSuccess(EventResult<Order>.Trigger(deletion)), cancellation: ct);
+            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(deletion)), cancellation: ct);
         }
     }
 }

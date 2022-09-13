@@ -10,10 +10,7 @@ namespace GODCustomers.Endpoints.Retrieve;
 
 public class RetrieveCustomersEndpoint : BaseEndpoint<RetrieveCustomersCommand, Paged<Customer>>
 {
-    private readonly DefaultContext _context;
-
-    public RetrieveCustomersEndpoint(DefaultContext context) => _context = context;
-
+    public RetrieveCustomersEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Get("paging");
@@ -32,7 +29,7 @@ public class RetrieveCustomersEndpoint : BaseEndpoint<RetrieveCustomersCommand, 
 
     private IQueryable<Customer> Query(RetrieveCustomersCommand req)
     {
-        var query = _context.Customers.AsQueryable();
+        var query = Context.Customers.AsQueryable();
         if (!string.IsNullOrWhiteSpace(req.Document))
             query = query.Where(x => x.Document.Contains(req.Document));
 

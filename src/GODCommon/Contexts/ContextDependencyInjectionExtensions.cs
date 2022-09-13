@@ -8,17 +8,15 @@ namespace GODCommon.Contexts;
 
 public static class ContextDependencyInjectionExtensions
 {
-    public static void AddContext<TContext, TSnapshot>(this IServiceCollection services,
-        IConfiguration configuration) where TContext : DefaultContextBase<TContext, TSnapshot> 
-        where TSnapshot : EntityBase.AsSnapshot =>
+    public static void AddContext<TContext>(this IServiceCollection services,
+        IConfiguration configuration) where TContext : DbContext =>
         services
             .AddDbContext<TContext>(opts
                 => opts.UseNpgsql(configuration.GetConnectionString(typeof(TContext).Name))
                     .UseSnakeCaseNamingConvention());
 
-    public static void UseAutoMigration<TContext, TSnapshot>(this IApplicationBuilder app) 
-        where TContext : DefaultContextBase<TContext, TSnapshot>
-        where TSnapshot : EntityBase.AsSnapshot
+    public static void UseAutoMigration<TContext>(this IApplicationBuilder app) 
+        where TContext : DbContext
     {
         using var scope = app.ApplicationServices.CreateScope();
         scope.ServiceProvider.GetRequiredService<TContext>().Database.Migrate();

@@ -11,8 +11,7 @@ namespace GODOrders.Endpoints.Retrieve;
 
 public sealed class RetrieveOrdersEndpoint : BaseEndpoint<RetrieveOrdersCommand, Paged<Order>>
 {
-    private readonly DefaultContext _context;
-    public RetrieveOrdersEndpoint(DefaultContext context) => _context = context;
+    public RetrieveOrdersEndpoint(DefaultContext context) : base(context) {}
 
     public override void Configure()
     {
@@ -34,7 +33,7 @@ public sealed class RetrieveOrdersEndpoint : BaseEndpoint<RetrieveOrdersCommand,
 
     private IQueryable<Order> Query(RetrieveOrdersCommand req)
     {
-        var query = _context.Orders.AsQueryable();
+        var query = Context.Orders.AsQueryable();
 
         if (req.Status.HasValue)
             query = query.Where(x => x.Status == req.Status);

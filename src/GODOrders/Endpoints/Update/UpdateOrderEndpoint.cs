@@ -12,10 +12,10 @@ namespace GODOrders.Endpoints.Update;
 
 public sealed class UpdateOrderEndpoint : BaseEndpoint<UpdateOrderCommand, EventResult<Order>>
 {
-    private readonly DefaultContext _context;
-
-    public UpdateOrderEndpoint(DefaultContext context) => _context = context;
-
+    public UpdateOrderEndpoint(DefaultContext context) : base(context)
+    {
+    }
+    
     public override void Configure()
     {
         Put("updates/{orderId}");
@@ -28,7 +28,7 @@ public sealed class UpdateOrderEndpoint : BaseEndpoint<UpdateOrderCommand, Event
 
     public override async Task HandleAsync(UpdateOrderCommand req, CancellationToken ct)
     {
-        var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == req.OrderId, ct);
+        var order = await Context.Orders.FirstOrDefaultAsync(x => x.Id == req.OrderId, ct);
         if (order is null)
             await SendAsync(RFac.WithError<EventResult<Order>>(OrderNotifications.OrderNotFound),
                 (int)HttpStatusCode.NotFound, ct);
@@ -37,9 +37,11 @@ public sealed class UpdateOrderEndpoint : BaseEndpoint<UpdateOrderCommand, Event
             req.UpdateEntity(order);
             var update = Event.Trigger(order, EventType.Update);
             
-            await _context.SaveEventAsync(order, update, ct);
+            await Context.SaveEventAsync(order, update, ct);
             await SendAsync(
-                RFac.WithSuccess(EventResult<Order>.Trigger(update)), cancellation: ct);
+                RFac.WithSuccess(EventResultTrigger.Trigger(update)), cancellation: ct);
         }
     }
+
+ 
 }

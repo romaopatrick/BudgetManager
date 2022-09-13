@@ -12,10 +12,7 @@ namespace GODBudgets.Endpoints.Update;
 
 public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, EventResult<Budget>>
 {
-    private readonly DefaultContext _context;
-
-    public UpdateBudgetEndpoint(DefaultContext context) => _context = context;
-
+    public UpdateBudgetEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Put("updates/{budgetId}");
@@ -28,7 +25,7 @@ public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, Eve
 
     public override async Task HandleAsync(UpdateBudgetCommand req, CancellationToken ct)
     {
-        var budget = await _context.Budgets.FirstOrDefaultAsync(x => x.Id == req.BudgetId, ct);
+        var budget = await Context.Budgets.FirstOrDefaultAsync(x => x.Id == req.BudgetId, ct);
         if (budget is null) await BudgetNotFoundFail(ct);
         
         else await Success(req, budget, ct);
@@ -42,7 +39,7 @@ public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, Eve
         req.UpdateEntity(budget);
         var update = Event.Trigger(budget, EventType.Update);
 
-        await _context.SaveEventAsync(budget, update, ct);
-        await SendAsync(RFac.WithSuccess(EventResult<Budget>.Trigger(update)), (int)HttpStatusCode.OK, ct);
+        await Context.SaveEventAsync(budget, update, ct);
+        await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(update)), (int)HttpStatusCode.OK, ct);
     }
 }

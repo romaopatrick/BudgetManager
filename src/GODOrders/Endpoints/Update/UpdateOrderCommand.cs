@@ -1,5 +1,3 @@
-using GODCommon.Enums;
-
 namespace GODOrders.Endpoints.Update;
 
 public sealed class UpdateOrderCommand 

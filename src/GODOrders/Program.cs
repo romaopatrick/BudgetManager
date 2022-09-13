@@ -48,6 +48,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCommonFastEndpoints("orders");
-app.UseAutoMigration<DefaultContext, Order>();
+app.UseAutoMigration<DefaultContext>();
 
 app.Run();

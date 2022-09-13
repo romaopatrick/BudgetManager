@@ -12,9 +12,7 @@ namespace GODBudgets.Endpoints.Delete;
 
 public sealed class DeleteBudgetEndpoint : BaseEndpoint<DeleteBudgetCommand, EventResult<Budget>>
 {
-    private readonly DefaultContext _context;
-
-    public DeleteBudgetEndpoint(DefaultContext context) => _context = context;
+    public DeleteBudgetEndpoint(DefaultContext context) : base(context) {}
 
     public override void Configure()
     {
@@ -27,19 +25,19 @@ public sealed class DeleteBudgetEndpoint : BaseEndpoint<DeleteBudgetCommand, Eve
 
     public override async Task HandleAsync(DeleteBudgetCommand req, CancellationToken ct)
     {
-        var budgetToDisable = await _context.Budgets.FirstOrDefaultAsync(x => x.Id == req.BudgetId, ct);
+        var budgetToDisable = await Context.Budgets.FirstOrDefaultAsync(x => x.Id == req.BudgetId, ct);
         if (budgetToDisable is null)
             await SendAsync(
                 RFac.WithError<EventResult<Budget>>(BudgetNotifications.BudgetNotFound),
                 (int)HttpStatusCode.NotFound, ct);
         else
         {
-            _context.Budgets.Remove(budgetToDisable);
+            Context.Budgets.Remove(budgetToDisable);
 
-            var deletion = Event.Trigger(budgetToDisable!, EventType.Deletion);
-            await _context.SaveEventAsync(deletion, ct);
+            var deletion = Event.Trigger(budgetToDisable, EventType.Deletion);
+            await Context.SaveEventAsync(deletion, ct);
 
-            await SendAsync(RFac.WithSuccess(EventResult<Budget>.Trigger(deletion)), (int)HttpStatusCode.OK, ct);
+            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(deletion)), (int)HttpStatusCode.OK, ct);
         }
     }
 }

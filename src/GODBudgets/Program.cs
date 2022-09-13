@@ -48,6 +48,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCommonFastEndpoints("budgets");
-app.UseAutoMigration<DefaultContext, Budget>();
+app.UseAutoMigration<DefaultContext>();
 
 app.Run();

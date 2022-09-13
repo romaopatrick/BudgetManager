@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GODCommon.Contexts;
 
-public abstract class DefaultContextBase<TContext, TSnapshot> : DbContext where TContext : DbContext
+public abstract class DefaultContextBase<TSnapshot> : DbContext
     where TSnapshot : EntityBase.AsSnapshot
 {
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-    protected DefaultContextBase(DbContextOptions<TContext> options) : base(options)
+    protected DefaultContextBase(DbContextOptions options) : base(options)
     {
         ChangeTracker.AutoDetectChangesEnabled = false;
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;

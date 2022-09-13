@@ -12,12 +12,7 @@ namespace GODBudgets.Endpoints.Create;
 
 public sealed class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, EventResult<Budget>>
 {
-    private readonly DefaultContext _context;
-
-    public CreateBudgetEndpoint(DefaultContext context)
-    {
-        _context = context;
-    }
+    public CreateBudgetEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Post("creations");
@@ -40,7 +35,7 @@ public sealed class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, Eve
             RFac.WithError<EventResult<Budget>>(BudgetNotifications.AnotherBudgetInProgress),
             (int)HttpStatusCode.BadRequest, ct);
     private Task<bool> BudgetInProgress(CreateBudgetCommand req, CancellationToken ct) =>
-        _context.Budgets.AnyAsync(x =>
+        Context.Budgets.AnyAsync(x =>
             x.OrderNumber == req.OrderNumber &&
             (x.Status != BudgetStatus.Pending
              || x.Status != BudgetStatus.Canceled), ct);
@@ -52,9 +47,9 @@ public sealed class CreateBudgetEndpoint : BaseEndpoint<CreateBudgetCommand, Eve
         var budget = req.ToEntity();
         var creation = Event.Trigger(budget, EventType.Creation);
         
-        await _context.SaveEventAsync(budget, creation, ct);
+        await Context.SaveEventAsync(budget, creation, ct);
         await SendAsync(
-            RFac.WithSuccess(EventResult<Budget>.Trigger(creation)), (int)HttpStatusCode.Created, ct);
+            RFac.WithSuccess(EventResultTrigger.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
 
 }

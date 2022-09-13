@@ -7,5 +7,5 @@ public static class DependencyInjection
 {
     public static void AddApplicationServices(this IServiceCollection services,
         IConfiguration configuration) =>
-        services.AddContext<DefaultContext, Budget>(configuration);
+        services.AddContext<DefaultContext>(configuration);
 }

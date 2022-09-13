@@ -10,9 +10,7 @@ namespace GODBudgets.Endpoints.Detail;
 
 public sealed class DetailBudgetEndpoint : BaseEndpoint<DetailBudgetCommand, Budget>
 {
-    private readonly DefaultContext _context;
-
-    public DetailBudgetEndpoint(DefaultContext context) => _context = context;
+    public DetailBudgetEndpoint(DefaultContext context) : base(context) {}
 
     public override void Configure()
     {
@@ -25,7 +23,7 @@ public sealed class DetailBudgetEndpoint : BaseEndpoint<DetailBudgetCommand, Bud
 
     public override async Task HandleAsync(DetailBudgetCommand req, CancellationToken ct)
     {
-        var budget = await _context.Budgets.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
+        var budget = await Context.Budgets.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
         if (budget is null)
             await SendAsync(RFac.WithError<Budget>(BudgetNotifications.BudgetNotFound),
                 (int)HttpStatusCode.NotFound, ct);

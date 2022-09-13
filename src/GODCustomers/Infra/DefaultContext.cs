@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GODCustomers.Infra;
 
-public sealed class DefaultContext: DefaultContextBase<DefaultContext, Customer>
+public sealed class DefaultContext: DefaultContextBase<Customer>
 {
     public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
     {
