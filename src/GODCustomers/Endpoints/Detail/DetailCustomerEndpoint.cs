@@ -3,6 +3,7 @@ using GODCommon.Endpoints;
 using GODCommon.Notifications;
 using GODCommon.Results;
 using GODCustomers.Infra;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
@@ -10,8 +11,6 @@ namespace GODCustomers.Endpoints.Detail;
 
 public sealed class DetailCustomerEndpoint : BaseEndpoint<DetailCustomerCommand, Customer>
 {
-    public DetailCustomerEndpoint(DefaultContext context) : base(context) {}
-    
     public override void Configure()
     {
         Get("details/{snapshotNumber}");
@@ -20,15 +19,7 @@ public sealed class DetailCustomerEndpoint : BaseEndpoint<DetailCustomerCommand,
             .Produces<IResult>((int)HttpStatusCode.InternalServerError));
         AllowAnonymous();
     }
-
-    public override async Task HandleAsync(DetailCustomerCommand req, CancellationToken ct)
+    public DetailCustomerEndpoint(IMediator mediator) : base(mediator)
     {
-        var customer = await Context.Customers.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
-        if (customer is null)
-            await SendAsync(
-                RFac.WithError<Customer>(CustomerNotifications.CustomerNotFound),
-                (int)HttpStatusCode.NotFound, ct);
-        
-        else await SendAsync(RFac.WithSuccess(customer), cancellation: ct);
     }
 }

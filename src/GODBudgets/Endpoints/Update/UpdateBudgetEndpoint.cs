@@ -5,6 +5,7 @@ using GODCommon.Enums;
 using GODCommon.Events;
 using GODCommon.Notifications;
 using GODCommon.Results;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
@@ -12,7 +13,6 @@ namespace GODBudgets.Endpoints.Update;
 
 public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, EventResult<Budget>>
 {
-    public UpdateBudgetEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Put("updates/{budgetId}");
@@ -23,23 +23,7 @@ public sealed class UpdateBudgetEndpoint : BaseEndpoint<UpdateBudgetCommand, Eve
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(UpdateBudgetCommand req, CancellationToken ct)
+    public UpdateBudgetEndpoint(IMediator mediator) : base(mediator)
     {
-        var budget = await Context.Budgets.FirstOrDefaultAsync(x => x.Id == req.BudgetId, ct);
-        if (budget is null) await BudgetNotFoundFail(ct);
-        
-        else await Success(req, budget, ct);
-    }
-
-    private Task BudgetNotFoundFail(CancellationToken ct)
-        => SendAsync(RFac.WithError<EventResult<Budget>>(
-            BudgetNotifications.BudgetNotFound), (int)HttpStatusCode.BadRequest, ct);
-    private async Task Success(UpdateBudgetCommand req, Budget budget, CancellationToken ct)
-    {
-        req.UpdateEntity(budget);
-        var update = Event.Trigger(budget, EventType.Update);
-
-        await Context.SaveEventAsync(budget, update, ct);
-        await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(update)), (int)HttpStatusCode.OK, ct);
     }
 }

@@ -1,16 +1,13 @@
 using System.Net;
-using GODCommon.Notifications;
+using GODCommon.Endpoints;
 using GODCommon.Results;
-using GODOrders.Infra;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using IResult = GODCommon.Results.IResult;
 
 namespace GODOrders.Endpoints.Detail;
 
 public sealed class DetailOrderEndpoint : BaseEndpoint<DetailOrderCommand, Order>
 {
-    public DetailOrderEndpoint(DefaultContext context) : base(context) {}
-
     public override void Configure()
     {
         Get("details/{snapshotNumber}");
@@ -20,13 +17,7 @@ public sealed class DetailOrderEndpoint : BaseEndpoint<DetailOrderCommand, Order
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(DetailOrderCommand req, CancellationToken ct)
+    public DetailOrderEndpoint(IMediator mediator) : base(mediator)
     {
-        var order = await Context.Orders.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
-        if (order is null)
-            await SendAsync(RFac.WithError<Order>(OrderNotifications.OrderNotFound),
-            (int)HttpStatusCode.NotFound, ct);
-        
-        else await SendAsync(RFac.WithSuccess(order), cancellation: ct);
     }
 }

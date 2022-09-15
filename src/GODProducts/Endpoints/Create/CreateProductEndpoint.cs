@@ -1,16 +1,16 @@
 using System.Net;
+using GODCommon.Endpoints;
 using GODCommon.Enums;
 using GODCommon.Events;
 using GODCommon.Results;
 using GODProducts.Infra;
+using MediatR;
 using IResult = GODCommon.Results.IResult;
 
 namespace GODProducts.Endpoints.Create;
 
 public sealed class CreateProductEndpoint : BaseEndpoint<CreateProductCommand, EventResult<Product>>
 {
-    public CreateProductEndpoint(DefaultContext context) : base(context) {}
-
     public override void Configure()
     {
         Post("creations");
@@ -21,12 +21,7 @@ public sealed class CreateProductEndpoint : BaseEndpoint<CreateProductCommand, E
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(CreateProductCommand req, CancellationToken ct)
+    public CreateProductEndpoint(IMediator mediator) : base(mediator)
     {
-        var product = req.ToEntity();
-        var creation = Event.Trigger(product, EventType.Creation);
-
-        await Context.SaveEventAsync(product, creation, ct);
-        await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
 }

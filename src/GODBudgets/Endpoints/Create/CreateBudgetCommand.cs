@@ -1,8 +1,11 @@
 using GODCommon.Enums;
+using GODCommon.Events;
+using GODCommon.Results;
+using MediatR;
 
 namespace GODBudgets.Endpoints.Create;
 
-public sealed class CreateBudgetCommand
+public sealed class CreateBudgetCommand : IRequest<IResult<EventResult<Budget>>>
 {
     public long OrderNumber { get; init; }
     public decimal? ProposedValue { get; init; }    

@@ -12,7 +12,7 @@ public sealed class CreateProductCommandValidator : Validator<CreateProductComma
         
         RuleFor(x => x.CustomerNumber)
             .GreaterThanOrEqualTo(0).WithErrorCode(ProductNotifications.InvalidCustomerNumber)
-            .NotEmpty().WithErrorCode(ProductNotifications.CustomerNumberCannotBeEmpty);
+            .NotNull().WithErrorCode(ProductNotifications.CustomerNumberCannotBeEmpty);
         
         RuleFor(x => x.EntryDate).NotEmpty().WithErrorCode(ProductNotifications.EntryDateCannotBeEmpty);
         RuleFor(x => x.ReportedDefect).NotEmpty().WithErrorCode(ProductNotifications.ReportedDefectCannotBeEmpty);

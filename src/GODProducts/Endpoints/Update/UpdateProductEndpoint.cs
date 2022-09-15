@@ -5,16 +5,14 @@ using GODCommon.Events;
 using GODCommon.Notifications;
 using GODCommon.Results;
 using GODProducts.Infra;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
 namespace GODProducts.Endpoints.Update;
 
-public sealed class UpdateProductEndpoint : BaseEndpoint<UpdateProductCommand, EventResult<Product>, DefaultContext>
+public sealed class UpdateProductEndpoint : BaseEndpoint<UpdateProductCommand, EventResult<Product>>
 {
-    public UpdateProductEndpoint(DefaultContext context) : base(context)
-    { }
-
     public override void Configure()
     {
         Put("updates/{productId}");
@@ -25,23 +23,7 @@ public sealed class UpdateProductEndpoint : BaseEndpoint<UpdateProductCommand, E
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(UpdateProductCommand req, CancellationToken ct)
+    public UpdateProductEndpoint(IMediator mediator) : base(mediator)
     {
-        var product = await Context.Products.FirstOrDefaultAsync(x => x.Id == req.ProductId, ct);
-        if (product is null)
-            await SendAsync(
-                RFac.WithError<EventResult<Product>>(ProductNotifications.ProductNotFound),
-                (int)HttpStatusCode.NotFound, ct);
-
-        else
-        {
-            req.UpdateEntity(product);
-            var update = Event.Trigger(product, EventType.Update);
-
-            await Context.SaveEventAsync(product, update, ct);
-
-            await SendAsync(
-                RFac.WithSuccess(EventResultTrigger.Trigger(update)), cancellation: ct);
-        }
     }
 }

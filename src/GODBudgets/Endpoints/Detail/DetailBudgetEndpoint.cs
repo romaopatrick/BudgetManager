@@ -3,6 +3,7 @@ using GODBudgets.Infra;
 using GODCommon.Endpoints;
 using GODCommon.Notifications;
 using GODCommon.Results;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
@@ -10,8 +11,6 @@ namespace GODBudgets.Endpoints.Detail;
 
 public sealed class DetailBudgetEndpoint : BaseEndpoint<DetailBudgetCommand, Budget>
 {
-    public DetailBudgetEndpoint(DefaultContext context) : base(context) {}
-
     public override void Configure()
     {
         Get("details/{snapshotNumber}");
@@ -21,13 +20,7 @@ public sealed class DetailBudgetEndpoint : BaseEndpoint<DetailBudgetCommand, Bud
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(DetailBudgetCommand req, CancellationToken ct)
+    public DetailBudgetEndpoint(IMediator mediator) : base(mediator)
     {
-        var budget = await Context.Budgets.FirstOrDefaultAsync(b => b.SnapshotNumber == req.SnapshotNumber, ct);
-        if (budget is null)
-            await SendAsync(RFac.WithError<Budget>(BudgetNotifications.BudgetNotFound),
-                (int)HttpStatusCode.NotFound, ct);
-        
-        else await SendAsync(RFac.WithSuccess(budget), cancellation: ct);
     }
 }

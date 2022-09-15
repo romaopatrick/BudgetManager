@@ -1,9 +1,11 @@
 using GODCommon.Enums;
+using GODCommon.Results;
 using GODCommon.Results.Paging;
+using MediatR;
 
 namespace GODProducts.Endpoints.Retrieve;
 
-public sealed class RetrieveProductsCommand : Paged
+public sealed class RetrieveProductsCommand : Paged, IRequest<IResult<Paged<Product>>>
 {
     public long? CustomerNumber { get; init; }
     public string? Name { get; init; }

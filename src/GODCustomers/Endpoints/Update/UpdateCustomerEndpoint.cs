@@ -5,6 +5,7 @@ using GODCommon.Events;
 using GODCommon.Notifications;
 using GODCommon.Results;
 using GODCustomers.Infra;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
@@ -12,8 +13,6 @@ namespace GODCustomers.Endpoints.Update;
 
 public sealed class UpdateCustomerEndpoint : BaseEndpoint<UpdateCustomerCommand, EventResult<Customer>>
 {
-    public UpdateCustomerEndpoint(DefaultContext context) : base(context) {}
-
     public override void Configure()
     {
         Put("updates/{customerId}");
@@ -26,19 +25,10 @@ public sealed class UpdateCustomerEndpoint : BaseEndpoint<UpdateCustomerCommand,
 
     public override async Task HandleAsync(UpdateCustomerCommand req, CancellationToken ct)
     {
-        var customer = await Context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
-        if (customer is null)
-            await SendAsync(
-                RFac.WithError<EventResult<Customer>>(
-                    CustomerNotifications.CustomerNotFound), 
-                    (int)HttpStatusCode.NotFound, ct);
-        else
-        {
-            req.UpdateEntity(customer);
-            var update = Event.Trigger(customer, EventType.Update);
 
-            await Context.SaveEventAsync(customer, update, ct);
-            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(update)), cancellation: ct);
-        }
+    }
+
+    public UpdateCustomerEndpoint(IMediator mediator) : base(mediator)
+    {
     }
 }

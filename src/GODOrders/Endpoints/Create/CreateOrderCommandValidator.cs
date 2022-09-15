@@ -3,7 +3,7 @@ using GODCommon.Notifications;
 
 namespace GODOrders.Endpoints.Create;
 
-public sealed class CreateOrderCommandValidator : Validator<CreateOrderCommand>
+public class CreateOrderCommandValidator : Validator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {

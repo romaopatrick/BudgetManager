@@ -4,13 +4,13 @@ using GODCommon.Enums;
 using GODCommon.Events;
 using GODCommon.Results;
 using GODCustomers.Infra;
+using MediatR;
 using IResult = GODCommon.Results.IResult;
 
 namespace GODCustomers.Endpoints.Create;
 
 public sealed class CreateCustomerEndpoint : BaseEndpoint<CreateCustomerCommand, EventResult<Customer>>
 {
-    public CreateCustomerEndpoint(DefaultContext context) : base(context) {}
     public override void Configure()
     {
         Post("creations");
@@ -21,14 +21,7 @@ public sealed class CreateCustomerEndpoint : BaseEndpoint<CreateCustomerCommand,
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(CreateCustomerCommand req, CancellationToken ct)
+    public CreateCustomerEndpoint(IMediator mediator) : base(mediator)
     {
-        var customer = req.ToEntity();
-        var creation = Event.Trigger(customer, EventType.Creation);
-
-        await Context.SaveEventAsync(customer, creation, ct);
-        await SendAsync(
-            RFac.WithSuccess(
-                EventResultTrigger.Trigger(creation)), (int)HttpStatusCode.Created, ct);
     }
 }

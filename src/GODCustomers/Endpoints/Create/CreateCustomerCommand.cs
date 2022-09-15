@@ -1,8 +1,11 @@
 using GODCommon.Enums;
+using GODCommon.Events;
+using GODCommon.Results;
+using MediatR;
 
 namespace GODCustomers.Endpoints.Create;
 
-public sealed class CreateCustomerCommand
+public sealed class CreateCustomerCommand : IRequest<IResult<EventResult<Customer>>>
 {
     public string Document { get; init; } 
     public string FullName { get; init; }

@@ -1,8 +1,11 @@
 using GODCommon.Enums;
+using GODCommon.Events;
+using GODCommon.Results;
+using MediatR;
 
 namespace GODProducts.Endpoints.Update;
 
-public sealed class UpdateProductCommand
+public sealed class UpdateProductCommand : IRequest<IResult<EventResult<Product>>>
 {
     public Guid ProductId { get; init; }
     public string? Brand { get; init; }

@@ -8,7 +8,7 @@ namespace GODCommon.Contexts;
 
 public static class ContextDependencyInjectionExtensions
 {
-    public static void AddContext<TContext>(this IServiceCollection services,
+    public static IServiceCollection AddContext<TContext>(this IServiceCollection services,
         IConfiguration configuration) where TContext : DbContext =>
         services
             .AddDbContext<TContext>(opts

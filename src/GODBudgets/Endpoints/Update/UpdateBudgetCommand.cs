@@ -1,8 +1,11 @@
 using GODCommon.Enums;
+using GODCommon.Events;
+using GODCommon.Results;
+using MediatR;
 
 namespace GODBudgets.Endpoints.Update;
 
-public sealed class UpdateBudgetCommand
+public sealed class UpdateBudgetCommand : IRequest<IResult<EventResult<Budget>>>
 {
     public Guid BudgetId { get; init; }
     public UpdateBudgetStatus? Status { get; init; }

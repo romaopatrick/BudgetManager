@@ -18,11 +18,11 @@ builder.Host.UseSerilog();
 builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerDoc(c =>
 {
-    c.Title = "GODOrders";
+    c.Title = "GODProducts";
     c.Version = "v1";
     c.AddAuth("ApiKey", new()
     {
-        Name = "orders_api_key",
+        Name = "products_api_key",
         In = OpenApiSecurityApiKeyLocation.Header,
         Type = OpenApiSecuritySchemeType.ApiKey
     });
@@ -47,7 +47,7 @@ app.UseHealthChecks("/health");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCommonFastEndpoints("orders");
+app.UseCommonFastEndpoints("products");
 
 app.UseAutoMigration<DefaultContext>();
 

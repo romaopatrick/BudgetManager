@@ -1,6 +1,10 @@
+using GODCommon.Events;
+using GODCommon.Results;
+using MediatR;
+
 namespace GODCustomers.Endpoints.Update;
 
-public sealed class UpdateCustomerCommand
+public sealed class UpdateCustomerCommand : IRequest<IResult<EventResult<Customer>>>
 {
     public Guid CustomerId { get; init; }
     public string? FullName { get; init; }

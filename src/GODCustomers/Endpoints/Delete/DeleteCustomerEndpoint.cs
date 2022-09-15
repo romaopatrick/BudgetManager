@@ -5,6 +5,7 @@ using GODCommon.Events;
 using GODCommon.Notifications;
 using GODCommon.Results;
 using GODCustomers.Infra;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IResult = GODCommon.Results.IResult;
 
@@ -12,9 +13,6 @@ namespace GODCustomers.Endpoints.Delete;
 
 public class DeleteCustomerEndpoint : BaseEndpoint<DeleteCustomerCommand, EventResult<Customer>>
 {
-    public DeleteCustomerEndpoint(DefaultContext context) : base(context)
-    {
-    }
     public override void Configure()
     {
         Delete("deletions/{customerId}");
@@ -24,20 +22,7 @@ public class DeleteCustomerEndpoint : BaseEndpoint<DeleteCustomerCommand, EventR
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(DeleteCustomerCommand req, CancellationToken ct)
+    public DeleteCustomerEndpoint(IMediator mediator) : base(mediator)
     {
-        var customer = await Context.Customers.FirstOrDefaultAsync(x => x.Id == req.CustomerId, ct);
-        if (customer is null)
-            await SendAsync(
-                RFac.WithError<EventResult<Customer>>(CustomerNotifications.CustomerNotFound),
-                (int)HttpStatusCode.NotFound, ct);
-        else
-        {
-            Context.Remove(customer);
-            var deletion = Event.Trigger(customer, EventType.Deletion);
-
-            await Context.SaveEventAsync(deletion, ct);
-            await SendAsync(RFac.WithSuccess(EventResultTrigger.Trigger(deletion)), cancellation: ct);
-        }
     }
 }
